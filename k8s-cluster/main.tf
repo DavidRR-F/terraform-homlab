@@ -25,6 +25,7 @@ resource "proxmox_vm_qemu" "k8s-master" {
   count       = var.master.count
   name        = "k8s-master-${count.index}"
   desc        = "k8s-master-node"
+  vmid        = var.master.vmid + count.index
   target_node = var.proxmox_host
 
   onboot = true
@@ -64,7 +65,7 @@ resource "proxmox_vm_qemu" "k8s-master" {
   bootdisk = "scsi0"
 
   os_type   = "cloud-init"
-  ipconfig0 = "ip=192.168.0.9${count.index}/24,gw=192.168.0.1"
+  ipconfig0 = "ip=${var.master.ip}${count.index}/24,gw=${var.gateway}"
   ciuser    = var.ssh_user
   sshkeys   = <<EOF
   ${local.ssh_public_key}
@@ -88,6 +89,7 @@ resource "proxmox_vm_qemu" "k8s-worker" {
   count       = var.worker.count
   name        = "k8s-worker-${count.index}"
   desc        = "k8s-worker-node"
+  vmid        = var.worker.vmid + count.index
   target_node = var.proxmox_host
 
   onboot = true
@@ -127,7 +129,7 @@ resource "proxmox_vm_qemu" "k8s-worker" {
   bootdisk = "scsi0"
 
   os_type   = "cloud-init"
-  ipconfig0 = "ip=192.168.0.8${count.index}/24,gw=192.168.0.1"
+  ipconfig0 = "ip=${var.worker.ip}${count.index}/24,gw=${var.gateway}"
   ciuser    = var.ssh_user
   sshkeys   = <<EOF
   ${local.ssh_public_key}
