@@ -19,7 +19,7 @@ variable "ssh_private_key" {
 }
 
 variable "master" {
-  type = map(string)
+  type = map(any)
   default = {
     "count"     = 1
     "cores"     = 2
@@ -30,7 +30,7 @@ variable "master" {
 }
 
 variable "worker" {
-  type = map(string)
+  type = map(any)
   default = {
     "count"     = 2
     "cores"     = 2
