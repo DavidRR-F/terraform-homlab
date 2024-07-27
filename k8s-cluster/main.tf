@@ -67,9 +67,7 @@ resource "proxmox_vm_qemu" "k8s-master" {
   os_type   = "cloud-init"
   ipconfig0 = "ip=${var.master.ip}${count.index}/24,gw=${var.gateway}"
   ciuser    = var.ssh_user
-  sshkeys   = <<EOF
-  ${local.ssh_public_key}
-  EOF
+  sshkeys   = local.ssh_public_key
 
   provisioner "remote-exec" {
     inline = [
@@ -131,9 +129,7 @@ resource "proxmox_vm_qemu" "k8s-worker" {
   os_type   = "cloud-init"
   ipconfig0 = "ip=${var.worker.ip}${count.index}/24,gw=${var.gateway}"
   ciuser    = var.ssh_user
-  sshkeys   = <<EOF
-  ${local.ssh_public_key}
-  EOF
+  sshkeys   = local.ssh_public_key
 
   provisioner "remote-exec" {
     inline = [

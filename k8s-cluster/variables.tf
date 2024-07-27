@@ -11,11 +11,13 @@ variable "ssh_user" {
 }
 
 variable "ssh_public_key" {
-  default = "~/.ssh/id_rsa.pub"
+  default   = "~/.ssh/id_rsa.pub"
+  sensitive = true
 }
 
 variable "ssh_private_key" {
-  default = "~/.ssh/id_rsa"
+  default   = "~/.ssh/id_rsa"
+  sensitive = true
 }
 
 variable "gateway" {
