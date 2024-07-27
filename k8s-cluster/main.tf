@@ -6,19 +6,34 @@ terraform {
   }
 }
 
-resource "proxmox_vm_qemu" "airflow" {
-  name        = "airflow"
-  vmid        = 200
-  desc        = "airflow-web-service"
+locals {
+  ssh_public_key  = file(var.ssh_public_key)
+  ssh_private_key = file(var.ssh_private_key)
+}
+
+output "ssh_public_key" {
+  value     = local.ssh_public_key
+  sensitive = true
+}
+
+output "ssh_private_key" {
+  value     = local.ssh_private_key
+  sensitive = true
+}
+
+resource "proxmox_vm_qemu" "k8s-master" {
+  count       = var.master.count
+  name        = "k8s-master-${count.index}"
+  desc        = "k8s-master-node"
   target_node = var.proxmox_host
 
   onboot = true
 
   clone = var.template_ubuntu
 
-  cores   = 2
-  sockets = 1
-  memory  = 2048
+  cores   = var.master.cores
+  sockets = var.master.sockets
+  memory  = var.master.memory
 
   agent = 1
 
@@ -32,7 +47,7 @@ resource "proxmox_vm_qemu" "airflow" {
       scsi0 {
         disk {
           storage = "local-lvm"
-          size    = "20G"
+          size    = var.master.disk-size
         }
       }
     }
@@ -49,10 +64,10 @@ resource "proxmox_vm_qemu" "airflow" {
   bootdisk = "scsi0"
 
   os_type   = "cloud-init"
-  ipconfig0 = "ip=192.168.0.70/24,gw=192.168.0.1"
+  ipconfig0 = "ip=192.168.0.9${count.index}/24,gw=192.168.0.1"
   ciuser    = var.ssh_user
   sshkeys   = <<EOF
-  ${file(var.ssh_public_key)}
+  ${local.ssh_public_key}
   EOF
 
   provisioner "remote-exec" {
@@ -63,25 +78,25 @@ resource "proxmox_vm_qemu" "airflow" {
     connection {
       type        = "ssh"
       user        = var.ssh_user
-      private_key = file(var.ssh_private_key)
+      private_key = local.ssh_private_key
       host        = self.default_ipv4_address
     }
   }
 }
 
-resource "proxmox_vm_qemu" "gitlab" {
-  name        = "gitlab"
-  desc        = "gitlab-web-service"
-  vmid        = 201
+resource "proxmox_vm_qemu" "k8s-worker" {
+  count       = var.worker.count
+  name        = "k8s-worker-${count.index}"
+  desc        = "k8s-worker-node"
   target_node = var.proxmox_host
 
   onboot = true
 
   clone = var.template_ubuntu
 
-  cores   = 2
-  sockets = 1
-  memory  = 2048
+  cores   = var.worker.cores
+  sockets = var.worker.sockets
+  memory  = var.worker.memory
 
   agent = 1
 
@@ -95,7 +110,7 @@ resource "proxmox_vm_qemu" "gitlab" {
       scsi0 {
         disk {
           storage = "local-lvm"
-          size    = "20G"
+          size    = var.worker.disk-size
         }
       }
     }
@@ -112,10 +127,10 @@ resource "proxmox_vm_qemu" "gitlab" {
   bootdisk = "scsi0"
 
   os_type   = "cloud-init"
-  ipconfig0 = "ip=192.168.0.71/24,gw=192.168.0.1"
+  ipconfig0 = "ip=192.168.0.8${count.index}/24,gw=192.168.0.1"
   ciuser    = var.ssh_user
   sshkeys   = <<EOF
-  ${file(var.ssh_public_key)}
+  ${local.ssh_public_key}
   EOF
 
   provisioner "remote-exec" {
@@ -126,7 +141,7 @@ resource "proxmox_vm_qemu" "gitlab" {
     connection {
       type        = "ssh"
       user        = var.ssh_user
-      private_key = file(var.ssh_private_key)
+      private_key = local.ssh_private_key
       host        = self.default_ipv4_address
     }
   }

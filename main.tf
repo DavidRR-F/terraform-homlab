@@ -16,17 +16,8 @@ provider "proxmox" {
   pm_tls_insecure     = true
 }
 
-module "k3s-cluster" {
-  source = "./k3s-cluster"
-
-  providers = {
-    proxmox = proxmox
-  }
-
-}
-
-module "web-services" {
-  source = "./web-services"
+module "k8s-cluster" {
+  source = "./k8s-cluster"
 
   providers = {
     proxmox = proxmox
