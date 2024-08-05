@@ -22,5 +22,20 @@ module "k8s-cluster" {
   providers = {
     proxmox = proxmox
   }
+}
 
+module "web-services" {
+  source = "./web-services"
+
+  providers = {
+    proxmox = proxmox
+  }
+}
+
+module "data-services" {
+  source = "./data-services"
+
+  providers = {
+    proxmox = proxmox
+  }
 }

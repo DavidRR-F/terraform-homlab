@@ -81,6 +81,12 @@ resource "proxmox_vm_qemu" "k8s-master" {
       host        = self.default_ipv4_address
     }
   }
+
+  lifecycle {
+    ignore_changes = [
+      bootdisk,
+    ]
+  }
 }
 
 resource "proxmox_vm_qemu" "k8s-worker" {
@@ -142,5 +148,11 @@ resource "proxmox_vm_qemu" "k8s-worker" {
       private_key = local.ssh_private_key
       host        = self.default_ipv4_address
     }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      bootdisk,
+    ]
   }
 }
