@@ -24,12 +24,11 @@ variable "gateway" {
   default = "192.168.0.1"
 }
 
-variable "airflow" {
+variable "gitlab" {
   type = map(any)
   default = {
     "vmid"      = 600
     "ip"        = "192.168.0.60"
-    "count"     = 1
     "cores"     = 2
     "sockets"   = 2
     "memory"    = 4096

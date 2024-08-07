@@ -21,19 +21,19 @@ output "ssh_private_key" {
   sensitive = true
 }
 
-resource "proxmox_vm_qemu" "airflow" {
-  name        = "airflow"
-  desc        = "apache-airflow"
-  vmid        = var.airflow.vmid
+resource "proxmox_vm_qemu" "gitlab" {
+  name        = "gitlab"
+  desc        = "gitlab-server"
+  vmid        = var.gitlab.vmid
   target_node = var.proxmox_host
 
   onboot = true
 
   clone = var.template_ubuntu
 
-  cores   = var.airflow.cores
-  sockets = var.airflow.sockets
-  memory  = var.airflow.memory
+  cores   = var.gitlab.cores
+  sockets = var.gitlab.sockets
+  memory  = var.gitlab.memory
 
   agent = 1
 
@@ -47,7 +47,7 @@ resource "proxmox_vm_qemu" "airflow" {
       scsi0 {
         disk {
           storage = "local-lvm"
-          size    = var.airflow.disk-size
+          size    = var.gitlab.disk-size
         }
       }
     }
@@ -64,7 +64,7 @@ resource "proxmox_vm_qemu" "airflow" {
   bootdisk = "scsi0"
 
   os_type   = "cloud-init"
-  ipconfig0 = "ip=${var.airflow.ip}/24,gw=${var.gateway}"
+  ipconfig0 = "ip=${var.gitlab.ip}/24,gw=${var.gateway}"
   ciuser    = var.ssh_user
   sshkeys   = local.ssh_public_key
 
