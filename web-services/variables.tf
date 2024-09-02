@@ -31,7 +31,7 @@ variable "gitlab" {
     "ip"        = "192.168.0.60"
     "cores"     = 2
     "sockets"   = 2
-    "memory"    = 4096
+    "memory"    = 6144
     "disk-size" = "20G"
   }
 }

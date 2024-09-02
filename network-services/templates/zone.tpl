@@ -1,0 +1,19 @@
+$TTL 2d
+
+$ORIGIN {{ .zone }}.
+
+@            IN    SOA    ns.{{ .zone }}.    {{ .email }}. (
+                          {{ .serial }}      ; Serial
+                          12h                ; Refresh
+                          15m                ; Retry
+                          3w                 ; Expire
+                          2h                 ; Minimum TTL
+                          )
+
+             IN    NS     ns.{{ .zone }}.
+
+ns           IN    A      {{ .ip }}
+
+; -- add dns records below this line --
+
+proxmox      IN    A      {{ .hostip }}

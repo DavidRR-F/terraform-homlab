@@ -39,3 +39,11 @@ module "data-services" {
     proxmox = proxmox
   }
 }
+
+module "network-services" {
+  source = "./network-services"
+
+  providers = {
+    proxmox = proxmox
+  }
+}
