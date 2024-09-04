@@ -40,8 +40,8 @@ module "data-services" {
   }
 }
 
-module "network-services" {
-  source = "./network-services"
+module "bind9-vm" {
+  source = "./bind9-vm"
 
   providers = {
     proxmox = proxmox

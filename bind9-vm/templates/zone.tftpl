@@ -1,19 +1,19 @@
 $TTL 2d
 
-$ORIGIN {{ .zone }}.
+$ORIGIN ${zone}.
 
-@            IN    SOA    ns.{{ .zone }}.    {{ .email }}. (
-                          {{ .serial }}      ; Serial
+@            IN    SOA    ns.${zone}.    ${email}. (
+                          ${serial}          ; Serial
                           12h                ; Refresh
                           15m                ; Retry
                           3w                 ; Expire
                           2h                 ; Minimum TTL
                           )
 
-             IN    NS     ns.{{ .zone }}.
+             IN    NS     ns.${zone}.
 
-ns           IN    A      {{ .ip }}
+ns           IN    A      ${ip}
 
 ; -- add dns records below this line --
 
-proxmox      IN    A      {{ .hostip }}
+proxmox      IN    A      ${host_ip}
