@@ -4,4 +4,7 @@
 *.backup
 *.lock.hcl
 .terraform/
+.envrc
+.envrc.*
+.env
 crash.log

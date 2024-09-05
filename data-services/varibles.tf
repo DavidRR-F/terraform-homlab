@@ -24,15 +24,26 @@ variable "gateway" {
   default = "192.168.0.1"
 }
 
-variable "postgres" {
+variable "dns_zone" {
+  type = string
+}
+
+variable "vault" {
   type = map(any)
   default = {
+    "name"      = "vault"
+    "desc"      = "HashiCorp Vault Server"
     "vmid"      = 500
     "ip"        = "192.168.0.50"
     "count"     = 1
-    "cores"     = 4
-    "sockets"   = 2
-    "memory"    = 8192
-    "disk-size" = "100G"
+    "cores"     = 2
+    "sockets"   = 1
+    "memory"    = 4096
+    "disk-size" = "20G"
+    "model"     = "virtio"
+    "bridge"    = "vmbr0"
+    "partition" = "local-lvm"
+    "scsihw"    = "virtio-scsi-single"
+    "bootdisk"  = "scsi0"
   }
 }

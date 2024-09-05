@@ -3,9 +3,6 @@ terraform {
     proxmox = {
       source = "telmate/proxmox"
     }
-    dns = {
-      source = "hashicorp/dns"
-    }
   }
 }
 
@@ -24,71 +21,62 @@ output "ssh_private_key" {
   sensitive = true
 }
 
-resource "dns_a_record_set" "vault" {
-  zone = var.dns_zone
-  name = var.vault.name
-  addresses = [
-    var.vault.ip
-  ]
-}
-
-resource "proxmox_vm_qemu" "vault" {
-  name        = var.vault.name
-  desc        = var.vault.desc
-  vmid        = var.vault.vmid
+resource "proxmox_vm_qemu" "bind9" {
+  name        = var.bind9.name
+  desc        = var.bind9.desc
+  vmid        = var.bind9.vmid
   target_node = var.proxmox_host
 
-  onboot = true
-
   clone = var.template_ubuntu
-
-  cores   = var.vault.cores
-  sockets = var.vault.sockets
-  memory  = var.vault.memory
-
   agent = 1
 
+  cores   = var.bind9.cores
+  sockets = var.bind9.sockets
+  memory  = var.bind9.memory
+
   network {
-    model  = var.vault.model
-    bridge = var.vault.bridge
+    model  = var.bind9.model
+    bridge = var.bind9.bridge
   }
 
   disks {
     scsi {
       scsi0 {
         disk {
-          storage = var.vault.partition
-          size    = var.vault.disk-size
+          storage = var.bind9.partition
+          size    = var.bind9.disk-size
         }
       }
     }
     ide {
       ide3 {
         cloudinit {
-          storage = var.vault.partition
+          storage = var.bind9.partition
         }
       }
     }
   }
 
-  scsihw   = var.vault.scsihw
-  bootdisk = var.vault.bootdisk
+  scsihw   = var.bind9.scsihw
+  bootdisk = var.bind9.bootdisk
 
   os_type   = "cloud-init"
-  ipconfig0 = "ip=${var.vault.ip}/24,gw=${var.gateway}"
+  ipconfig0 = "ip=${var.bind9.ip}/24,gw=${var.bind9.gateway}"
   ciuser    = var.ssh_user
   sshkeys   = local.ssh_public_key
 
+  onboot = true
+
   provisioner "remote-exec" {
     inline = [
-      "ip a"
+      "ip a",
     ]
 
     connection {
       type        = "ssh"
       user        = var.ssh_user
       private_key = local.ssh_private_key
-      host        = self.default_ipv4_address
+      host        = var.bind9.ip
     }
   }
 

@@ -3,7 +3,7 @@ variable "proxmox_host" {
 }
 
 variable "template_ubuntu" {
-  default = "ubuntu-2404lts-docker"
+  default = "ubuntu-2404lts"
 }
 
 variable "ssh_user" {
@@ -18,25 +18,6 @@ variable "ssh_public_key" {
 variable "ssh_private_key" {
   default   = "~/.ssh/id_rsa"
   sensitive = true
-}
-
-variable "email" {
-  default   = ""
-  sensitive = true
-}
-
-variable "subdomain" {
-  default   = ""
-  sensitive = true
-}
-
-variable "tsig_key" {
-  default   = ""
-  sensitive = true
-}
-
-variable "proxmox_ip" {
-  default = ""
 }
 
 variable "bind9" {
@@ -56,7 +37,6 @@ variable "bind9" {
     "disk-size" = "20G"
     "bootdisk"  = "scsi0"
     "scsihw"    = "virtio-scsi-single"
-    "image"     = "ubuntu/bind9:latest"
   }
 }
 
