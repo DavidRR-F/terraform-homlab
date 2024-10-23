@@ -3,6 +3,9 @@ terraform {
     proxmox = {
       source = "telmate/proxmox"
     }
+    dns = {
+      source = "hashicorp/dns"
+    }
   }
 }
 
@@ -21,50 +24,58 @@ output "ssh_private_key" {
   sensitive = true
 }
 
-resource "proxmox_vm_qemu" "jellyfin" {
-  name        = "jellyfin"
-  desc        = "jellyfin-server"
-  vmid        = var.jellyfin.vmid
+resource "dns_a_record_set" "keycloak" {
+  zone = var.dns_zone
+  name = var.keycloak.name
+  addresses = [
+    var.keycloak.ip
+  ]
+}
+
+resource "proxmox_vm_qemu" "keycloak" {
+  name        = var.keycloak.name
+  desc        = var.keycloak.desc
+  vmid        = var.keycloak.vmid
   target_node = var.proxmox_host
 
   onboot = true
 
   clone = var.template_ubuntu
 
-  cores   = var.jellyfin.cores
-  sockets = var.jellyfin.sockets
-  memory  = var.jellyfin.memory
+  cores   = var.keycloak.cores
+  sockets = var.keycloak.sockets
+  memory  = var.keycloak.memory
 
   agent = 1
 
   network {
-    model  = "virtio"
-    bridge = "vmbr0"
+    model  = var.keycloak.model
+    bridge = var.keycloak.bridge
   }
 
   disks {
     scsi {
       scsi0 {
         disk {
-          storage = "local-lvm"
-          size    = var.jellyfin.disk-size
+          storage = var.keycloak.partition
+          size    = var.keycloak.disk-size
         }
       }
     }
     ide {
       ide3 {
         cloudinit {
-          storage = "local-lvm"
+          storage = var.keycloak.partition
         }
       }
     }
   }
 
-  scsihw   = "virtio-scsi-single"
-  bootdisk = "scsi0"
+  scsihw   = var.keycloak.scsihw
+  bootdisk = var.keycloak.bootdisk
 
   os_type   = "cloud-init"
-  ipconfig0 = "ip=${var.jellyfin.ip}/24,gw=${var.gateway}"
+  ipconfig0 = "ip=${var.keycloak.ip}/24,gw=${var.gateway}"
   ciuser    = var.ssh_user
   sshkeys   = local.ssh_public_key
 
@@ -81,9 +92,9 @@ resource "proxmox_vm_qemu" "jellyfin" {
     }
   }
 
-//  lifecycle {
-//    ignore_changes = [
-//      bootdisk,
-//    ]
-//  }
+  //  lifecycle {
+  //    ignore_changes = [
+  //      bootdisk,
+  //    ]
+  //  }
 }

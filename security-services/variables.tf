@@ -24,14 +24,26 @@ variable "gateway" {
   default = "192.168.0.1"
 }
 
-variable "jellyfin" {
+variable "dns_zone" {
+  type = string
+}
+
+variable "keycloak" {
   type = map(any)
   default = {
-    "vmid"      = 600
-    "ip"        = "192.168.0.60"
+    "name"      = "keycloak"
+    "desc"      = "IAM Server"
+    "vmid"      = 400
+    "ip"        = "192.168.0.40"
+    "count"     = 1
     "cores"     = 2
-    "sockets"   = 2
-    "memory"    = 6144
+    "sockets"   = 1
+    "memory"    = 4096
     "disk-size" = "20G"
+    "model"     = "virtio"
+    "bridge"    = "vmbr0"
+    "partition" = "local-lvm"
+    "scsihw"    = "virtio-scsi-single"
+    "bootdisk"  = "scsi0"
   }
 }
