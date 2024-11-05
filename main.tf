@@ -73,3 +73,14 @@ module "security-services" {
 
   dns_zone = var.dns_zone
 }
+
+module "slurm-cluster" {
+  source = "./slurm-cluster"
+
+  providers = {
+    proxmox = proxmox
+    dns     = dns
+  }
+
+  dns_zone = var.dns_zone
+}
