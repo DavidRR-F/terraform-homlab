@@ -10,21 +10,39 @@ terraform {
       source  = "hashicorp/dns"
       version = "3.4.1"
     }
+    onepassword = {
+      source  = "1Password/onepassword"
+      version = "~> 2.0.0"
+    }
   }
 }
 
+provider "onepassword" {
+  op_cli_path = var.op_cli_path
+}
+
+data "onepassword_item" "proxmox_credentials" {
+  vault = var.vault_uuid
+  title = "Proxmox Api"
+}
+
 provider "proxmox" {
-  pm_api_url          = var.proxmox_api_url
-  pm_api_token_id     = var.proxmox_api_token_id
-  pm_api_token_secret = var.proxmox_api_token_secret
+  pm_api_url          = data.proxmox_credentials.url
+  pm_api_token_id     = data.proxmox_credentials.username
+  pm_api_token_secret = data.proxmox_credentials.credential
+}
+
+data "onepassword_item" "dns_credentials" {
+  vault = var.vault_uuid
+  title = "DNS Credentials"
 }
 
 provider "dns" {
   update {
-    server        = var.dns_server
-    key_name      = var.dns_key
-    key_algorithm = var.dns_algorithm
-    key_secret    = var.dns_secret
+    server        = data.dns_credentials.hostname
+    key_name      = "tsig-key."
+    key_algorithm = "hmac-sha256"
+    key_secret    = data.dns_credentials.credential
   }
 }
 
@@ -52,7 +70,7 @@ module "data-services" {
     dns     = dns
   }
 
-  dns_zone = var.dns_zone
+  dns_zone = data.dns_credentials.dns_zone
 }
 
 module "network-services" {
@@ -71,16 +89,18 @@ module "security-services" {
     dns     = dns
   }
 
-  dns_zone = var.dns_zone
+  dns_zone = data.dns_credentials.dns_zone
 }
 
 module "slurm-cluster" {
   source = "./slurm-cluster"
 
   providers = {
-    proxmox = proxmox
-    dns     = dns
+    proxmox     = proxmox
+    dns         = dns
+    onepassword = onepassword
   }
 
-  dns_zone = var.dns_zone
+  dns_zone   = data.dns_credentials.dns_zone
+  vault_uuid = var.vault_uuid
 }

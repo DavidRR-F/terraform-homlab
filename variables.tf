@@ -1,17 +1,3 @@
-variable "proxmox_api_url" {
-  type = string
-}
-
-variable "proxmox_api_token_id" {
-  type      = string
-  sensitive = true
-}
-
-variable "proxmox_api_token_secret" {
-  type      = string
-  sensitive = true
-}
-
 variable "dns_server" {
   type = string
 }
@@ -26,11 +12,14 @@ variable "dns_algorithm" {
   type    = string
 }
 
-variable "dns_secret" {
-  type      = string
-  sensitive = true
+variable "dns_zone" {
+  type = string
 }
 
-variable "dns_zone" {
+variable "op_cli_path" {
+  type = string
+}
+
+variable "vault_uuid" {
   type = string
 }

@@ -6,22 +6,15 @@ terraform {
     dns = {
       source = "hashicorp/dns"
     }
+    onepassword = {
+      source = "1Password/onepassword"
+    }
   }
 }
 
-locals {
-  ssh_public_key  = file(var.ssh_public_key)
-  ssh_private_key = file(var.ssh_private_key)
-}
-
-output "ssh_public_key" {
-  value     = local.ssh_public_key
-  sensitive = true
-}
-
-output "ssh_private_key" {
-  value     = local.ssh_private_key
-  sensitive = true
+data "onepassword_item" "homelab_ssh" {
+  vault = var.vault_uuid
+  title = "Homelab Key"
 }
 
 resource "dns_a_record_set" "slurm-master" {
@@ -78,8 +71,8 @@ resource "proxmox_vm_qemu" "slurm-master" {
 
   os_type   = "cloud-init"
   ipconfig0 = "ip=${var.master.ip}${count.index}/24,gw=${var.gateway}"
-  ciuser    = var.ssh_user
-  sshkeys   = local.ssh_public_key
+  ciuser    = data.homelab_ssh.user
+  sshkeys   = data.homelab_ssh.public_key
 
   provisioner "remote-exec" {
     inline = [
@@ -88,8 +81,8 @@ resource "proxmox_vm_qemu" "slurm-master" {
 
     connection {
       type        = "ssh"
-      user        = var.ssh_user
-      private_key = local.ssh_private_key
+      user        = data.homelab_ssh.user
+      private_key = data.homelab_ssh.private_key
       host        = self.default_ipv4_address
     }
   }
@@ -155,8 +148,8 @@ resource "proxmox_vm_qemu" "slurm-worker" {
 
   os_type   = "cloud-init"
   ipconfig0 = "ip=${var.worker.ip}${count.index}/24,gw=${var.gateway}"
-  ciuser    = var.ssh_user
-  sshkeys   = local.ssh_public_key
+  ciuser    = data.homelab_ssh.user
+  sshkeys   = data.homelab_ssh.public_key
 
   provisioner "remote-exec" {
     inline = [
@@ -165,8 +158,8 @@ resource "proxmox_vm_qemu" "slurm-worker" {
 
     connection {
       type        = "ssh"
-      user        = var.ssh_user
-      private_key = local.ssh_private_key
+      user        = data.homelab_ssh.user
+      private_key = data.homelab_ssh.private_key
       host        = self.default_ipv4_address
     }
   }

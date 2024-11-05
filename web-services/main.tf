@@ -81,9 +81,9 @@ resource "proxmox_vm_qemu" "jellyfin" {
     }
   }
 
-//  lifecycle {
-//    ignore_changes = [
-//      bootdisk,
-//    ]
-//  }
+  //  lifecycle {
+  //    ignore_changes = [
+  //      bootdisk,
+  //    ]
+  //  }
 }
