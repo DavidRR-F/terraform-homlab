@@ -16,6 +16,10 @@ This repository contains Terraform configuration files used to manage and automa
 - Manages secrets and vaults in 1Password.
 - Used to securely store and retrieve credentials, API keys, and other sensitive information.
 
+### 4. [MinIO](https://www.terraform.io/docs/providers/minio/index.html)
+- Manages terraform state with s3 compatibility
+- Used to create remote persitent storage for terraform state
+
 ## Providers
 
 - [Terraform](https://www.terraform.io/downloads)
@@ -28,3 +32,4 @@ Ensure the necessary API tokens or credentials for each provider stored in a 1Pa
 - **Proxmox**: API token for Proxmox instance.
 - **DNS**: API key or credentials for DNS provider.
 - **1Password**: 1Password cli integration.
+- **MinIO**: Persistent state storage
