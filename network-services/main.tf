@@ -1,26 +1,3 @@
-terraform {
-  required_providers {
-    proxmox = {
-      source = "telmate/proxmox"
-    }
-  }
-}
-
-locals {
-  ssh_public_key  = file(var.ssh_public_key)
-  ssh_private_key = file(var.ssh_private_key)
-}
-
-output "ssh_public_key" {
-  value     = local.ssh_public_key
-  sensitive = true
-}
-
-output "ssh_private_key" {
-  value     = local.ssh_private_key
-  sensitive = true
-}
-
 resource "proxmox_vm_qemu" "bind9" {
   name        = var.bind9.name
   desc        = var.bind9.desc
@@ -63,7 +40,7 @@ resource "proxmox_vm_qemu" "bind9" {
   os_type   = "cloud-init"
   ipconfig0 = "ip=${var.bind9.ip}/24,gw=${var.bind9.gateway}"
   ciuser    = var.ssh_user
-  sshkeys   = local.ssh_public_key
+  sshkeys   = var.ssh_public_key
 
   onboot = true
 
@@ -75,14 +52,8 @@ resource "proxmox_vm_qemu" "bind9" {
     connection {
       type        = "ssh"
       user        = var.ssh_user
-      private_key = local.ssh_private_key
+      private_key = var.ssh_private_key
       host        = var.bind9.ip
     }
-  }
-
-  lifecycle {
-    ignore_changes = [
-      bootdisk,
-    ]
   }
 }

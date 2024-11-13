@@ -7,17 +7,15 @@ variable "template_ubuntu" {
 }
 
 variable "ssh_user" {
-  default = "admin"
+  type = string
 }
 
 variable "ssh_public_key" {
-  default   = "~/.ssh/id_rsa.pub"
-  sensitive = true
+  type = string
 }
 
 variable "ssh_private_key" {
-  default   = "~/.ssh/id_rsa"
-  sensitive = true
+  type = string
 }
 
 variable "bind9" {
