@@ -19,6 +19,10 @@ variable "vault_uuid" {
   type = string
 }
 
+variable "proxmox_url" {
+  type = string
+}
+
 variable "dns_zone" {
   type = string
 }

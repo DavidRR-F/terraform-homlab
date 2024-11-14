@@ -17,7 +17,7 @@ terraform {
 }
 
 provider "onepassword" {
-  url         = terraform.workspace == "prod" ? var.op_token : null
+  url         = terraform.workspace == "prod" ? var.op_url : null
   token       = terraform.workspace == "prod" ? var.op_token : null
   account     = terraform.workspace == "dev" ? var.op_account : null
   op_cli_path = terraform.workspace == "dev" ? var.op_cli_path : null
@@ -29,7 +29,7 @@ data "onepassword_item" "proxmox_credentials" {
 }
 
 provider "proxmox" {
-  pm_api_url          = data.onepassword_item.proxmox_credentials.url
+  pm_api_url          = var.proxmox_url
   pm_api_token_id     = data.onepassword_item.proxmox_credentials.username
   pm_api_token_secret = data.onepassword_item.proxmox_credentials.credential
 }

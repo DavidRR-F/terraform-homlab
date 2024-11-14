@@ -56,4 +56,7 @@ resource "proxmox_vm_qemu" "bind9" {
       host        = var.bind9.ip
     }
   }
+  lifecycle {
+    ignore_changes = all
+  }
 }
