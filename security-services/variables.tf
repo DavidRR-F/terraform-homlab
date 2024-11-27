@@ -34,7 +34,7 @@ variable "authentik" {
     "ip"        = "192.168.0.40"
     "cores"     = 2
     "sockets"   = 2
-    "memory"    = 2048
+    "memory"    = 4096
     "disk-size" = "20G"
   }
 }
